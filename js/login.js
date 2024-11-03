@@ -27,7 +27,7 @@ document.getElementById('loginWithExtension').onclick = () => {
         .then(response => {
             if (response.ok) {
                 alert('ログイン成功');
-                window.location.href = 'calendar.html'; // カレンダーのページにリダイレクト
+                window.location.href = './calendar/calendar.html'; // カレンダーのページにリダイレクト
             } else {
                 return response.json().then(errData => {
                     alert(`ログイン失敗: ${errData.message || '不明なエラー'}`);
