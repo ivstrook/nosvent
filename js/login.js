@@ -26,6 +26,7 @@ document.getElementById('loginWithExtension').onclick = () => {
     }
 };
 
+
 // nsec1でログインする処理
 document.getElementById('loginWithNsec1').onclick = () => {
     const secretKey = document.getElementById('secretKey').value;
