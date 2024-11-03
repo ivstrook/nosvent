@@ -51,3 +51,21 @@ app.post('/api/login/extension', (req, res) => {
         res.status(400).json({ message: 'ログイン失敗' });
     }
 });
+fetch('/api/login/extension', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+        signature: signature.sig, 
+        message: message,
+        pubkey: signature.pubkey 
+    }),
+})
+.then(response => {
+    return response.text().then(text => {
+        if (!response.ok) {
+            console.error('エラーレスポンス:', text);
+            throw new Error(text || '不明なエラー');
+        }
+        return JSON.parse(text);
+    });
+})
