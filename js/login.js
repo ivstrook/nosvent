@@ -27,6 +27,7 @@ document.getElementById('loginWithExtension').onclick = () => {
             alert('署名の取得に失敗しました。');
         });
     } else {
+        console.log(window.nostr);
         alert('Nostr APIが利用できません。拡張機能が正しくインストールされているか確認してください。');
     }
 };
