@@ -1,24 +1,29 @@
 // 拡張機能でログインする処理
 document.getElementById('loginWithExtension').onclick = () => {
     const message = "ログインメッセージ"; // 署名するメッセージ
-    window.nostr.signMessage(message).then(signature => {
-        // サーバーに署名を送信
-        fetch('/api/login/extension', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ signature, message }),
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('ログイン成功');
-                window.location.href = 'calendar.html'; // カレンダーのページにリダイレクト
-            } else {
-                alert('ログイン失敗');
-            }
+
+    if (typeof window.nostr !== 'undefined' && typeof window.nostr.signMessage === 'function') {
+        window.nostr.signMessage(message).then(signature => {
+            // サーバーに署名を送信
+            fetch('/api/login/extension', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ signature, message }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('ログイン成功');
+                    window.location.href = 'calendar.html'; // カレンダーのページにリダイレクト
+                } else {
+                    alert('ログイン失敗');
+                }
+            });
+        }).catch(err => {
+            console.error('署名の取得に失敗:', err);
         });
-    }).catch(err => {
-        console.error('署名の取得に失敗:', err);
-    });
+    } else {
+        alert('Nostr APIが利用できません。拡張機能が正しくインストールされているか確認してください。');
+    }
 };
 
 // nsec1でログインする処理
