@@ -19,29 +19,30 @@ document.getElementById('loginWithExtension').onclick = () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                signature: signature.sig, 
+                signature: signature.sig, // 署名を送信
                 message: message,
-                pubkey: signature.pubkey 
+                pubkey: signature.pubkey // 公開鍵も送信
             }),
         })
         .then(response => {
-            return response.text().then(text => {
-                // レスポンスがJSONでない場合の処理
-                if (!response.ok) {
-                    throw new Error(text || '不明なエラー');
-                }
-                return JSON.parse(text); // JSONとして解析
-            });
-        })
-        .then(data => {
-            alert('ログイン成功');
-            window.location.href = 'calendar.html';
+            if (response.ok) {
+                alert('ログイン成功');
+                window.location.href = './calendar/calendar.html'; // カレンダーのページにリダイレクト
+            } else {
+                return response.json().then(errData => {
+                    alert(`ログイン失敗: ${errData.message || '不明なエラー'}`);
+                });
+            }
         })
         .catch(err => {
             console.error('リクエスト中にエラーが発生:', err);
             alert('サーバーへのリクエスト中にエラーが発生しました。');
-        });           
-    };
+        });
+    }).catch(err => {
+        console.error('署名の取得に失敗:', err);
+        alert('署名の取得に失敗しました。拡張機能が正しく動作しているか確認してください。');
+    });
+};
 app.post('/api/login/extension', (req, res) => {
     // ログイン処理...
     if (成功) {
