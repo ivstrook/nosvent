@@ -1,7 +1,7 @@
 // 拡張機能でログインする処理
 document.getElementById('loginWithExtension').onclick = () => {
     const message = "ログインメッセージ"; // 署名するメッセージ
-    const event = {
+    const event
         kind: 1, // イベントの種類
         content: ,
         tags: [], // タグは必要に応じて追加
