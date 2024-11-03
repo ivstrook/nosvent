@@ -2,8 +2,9 @@
 import { sendLoginRequest } from './loginRequest.js';
 
 document.getElementById('loginButton').addEventListener('click', function() {
-    const pubkey = 'your_pubkey'; // 実際のpubkeyを取得
-    const sig = 'your_signature';   // 実際のsignatureを取得
+    // nos2xを使ってpubkeyやsigを取得
+    const pubkey = nos2x.getPublicKey(); // 例: 正しい方法でpubkeyを取得
+    const sig = nos2x.signEvent('ログインメッセージ'); // 例: 署名を生成
     
     sendLoginRequest(pubkey, sig)
         .then(data => {
@@ -14,3 +15,4 @@ document.getElementById('loginButton').addEventListener('click', function() {
             console.error('Error:', error);
         });
 });
+
