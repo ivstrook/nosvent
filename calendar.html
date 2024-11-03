@@ -20,7 +20,7 @@
             <span class="close">&times;</span>
             <h2>予定を追加/編集</h2>
             <input type="text" id="modalEventInput" placeholder="予定を入力" />
-            <input type="text" id="modalUserInput" placeholder="登録者名を入力" /> <!-- 登録者名の入力フィールド -->
+            <input type="text" id="modalUserInput" placeholder="登録者名を入力" />
             <input type="text" id="modalUrlInput" placeholder="URLを入力（任意）" />
             <button id="saveEventButton">保存</button>
         </div>
@@ -48,7 +48,6 @@
             const calendar = document.getElementById('calendar');
             calendar.innerHTML = ''; // 一旦リセット
 
-            // 12月のカレンダーを生成
             const year = 2024;
             const month = 11; // 12月
             const daysInMonth = 25; // 25日まで表示
@@ -78,7 +77,6 @@
                 dayDiv.className = 'calendar-day';
                 dayDiv.textContent = day;
 
-                // その日に予定がある場合はクラスを追加
                 const formattedDate = date.toISOString().split('T')[0];
                 const eventsForDate = eventListData.filter(event => event.date === formattedDate);
                 if (eventsForDate.length > 0) {
@@ -109,7 +107,7 @@
             } else {
                 eventsForDate.forEach((event, index) => {
                     const listItem = document.createElement('li');
-                    listItem.textContent = event.text;
+                    listItem.textContent = `${event.text} (登録者: ${event.user})`;
 
                     if (event.url) {
                         const link = document.createElement('a');
@@ -175,7 +173,8 @@
             const url = document.getElementById('urlInput').value;
 
             if (eventText) {
-                eventListData.push({ date: formattedDate, text: eventText, url: url });
+                const userName = document.getElementById('modalUserInput').value || '未登録'; // 登録者名のデフォルト値
+                eventListData.push({ date: formattedDate, text: eventText, user: userName, url: url });
                 renderEventsForDate(date); // 日付に対する予定を表示
                 renderCalendar(); // カレンダーの再描画
                 clearInputs();
@@ -201,7 +200,7 @@
                     const url = document.getElementById('urlInput').value;
 
                     if (eventText) {
-                        eventListData.push({ date: formattedDate, text: eventText, url: url });
+                        eventListData.push({ date: formattedDate, text: eventText, user: '未登録', url: url });
                         renderEventsForDate(date); // 日付に対する予定を表示
                         renderCalendar(); // カレンダーの再描画
                         clearInputs();

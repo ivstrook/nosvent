@@ -2,15 +2,15 @@
 let eventListData = []; // 予定のデータを保持
 
 // 予定を追加する関数
-function addEvent(date, text, user) {
+function addEvent(date, text, user, url) {
     const existingEventIndex = eventListData.findIndex(e => e.date === date);
     
     if (existingEventIndex > -1) {
         // 既存の予定を更新
-        eventListData[existingEventIndex] = { date, text, user };
+        eventListData[existingEventIndex] = { date, text, user, url };
     } else {
         // 新しい予定を追加
-        eventListData.push({ date, text, user });
+        eventListData.push({ date, text, user, url });
     }
 }
 
@@ -58,7 +58,11 @@ function renderCalendar() {
 
         // 日付セルをクリックすると予定を追加
         dayDiv.onclick = () => {
-            openEventModal(date);
+            if (eventForDate) {
+                alert(`投稿のURL: ${eventForDate.url}`);
+            } else {
+                openEventModal(date);
+            }
         };
 
         calendar.appendChild(dayDiv);
@@ -71,7 +75,7 @@ function openEventModal(date) {
     modal.style.display = "block";
     document.getElementById('modalEventInput').value = '';
     document.getElementById('modalUserInput').value = '';
-    document.getElementById('modalUrlInput').value = '';
+    document.getElementById('modalUrlInput').value = ''; // URL入力フィールドのリセット
     document.getElementById('saveEventButton').onclick = () => {
         saveEvent(date);
     };
@@ -81,14 +85,15 @@ function openEventModal(date) {
 function saveEvent(date) {
     const eventText = document.getElementById('modalEventInput').value;
     const userName = document.getElementById('modalUserInput').value; // 登録者名を取得
+    const eventUrl = document.getElementById('modalUrlInput').value; // URLを取得
 
-    if (eventText && userName) { // 予定と登録者名がある場合
+    if (eventText && userName && eventUrl) { // 予定と登録者名、URLがある場合
         const formattedDate = date.toISOString().split('T')[0];
-        addEvent(formattedDate, eventText, userName);
+        addEvent(formattedDate, eventText, userName, eventUrl);
         renderCalendar(); // カレンダーを再描画
         closeEventModal(); // モーダルを閉じる
     } else {
-        alert('予定と登録者名を入力してください');
+        alert('予定、登録者名、URLを入力してください');
     }
 }
 
