@@ -1,12 +1,17 @@
-// 拡張機能でログインする処理
 document.getElementById('loginWithExtension').onclick = () => {
     const message = "ログインメッセージ"; // 署名するメッセージ
-    const event
-        kind: 1, // イベントの種類
-        content: ,
-        tags: [], // タグは必要に応じて追加
-        created_at: Math.floor(Date.now() / 1000) // Unix時間
+    const event = {
+        kind: 1,
+        content: message, // メッセージを設定
+        tags: [],
+        created_at: Math.floor(Date.now() / 1000)
     };
+
+    // 拡張機能の確認
+    if (typeof window.nostr === 'undefined' || typeof window.nostr.signEvent !== 'function') {
+        alert('拡張機能が正しく読み込まれていないか、実行できません。');
+        return;
+    }
 
     window.nostr.signEvent(event).then(signature => {
         // サーバーに署名と必要なデータを送信
@@ -24,10 +29,17 @@ document.getElementById('loginWithExtension').onclick = () => {
                 alert('ログイン成功');
                 window.location.href = 'calendar.html'; // カレンダーのページにリダイレクト
             } else {
-                alert('ログイン失敗');
+                return response.json().then(errData => {
+                    alert(`ログイン失敗: ${errData.message || '不明なエラー'}`);
+                });
             }
+        })
+        .catch(err => {
+            console.error('リクエスト中にエラーが発生:', err);
+            alert('サーバーへのリクエスト中にエラーが発生しました。');
         });
     }).catch(err => {
         console.error('署名の取得に失敗:', err);
+        alert('署名の取得に失敗しました。拡張機能が正しく動作しているか確認してください。');
     });
-}    
+};
