@@ -8,6 +8,9 @@
 <body>
     <h2>カレンダーを作成</h2>
     <form id="calendarForm">
+        <label for="calendarId">カレンダーのID（任意、指定しない場合は自動生成）:</label>
+        <input type="text" id="calendarId" maxlength="12" pattern="[A-Za-z0-9]*" title="英数字を入力してください。最大12文字。" placeholder="任意のIDを入力">
+
         <label for="title">カレンダーのタイトル:</label>
         <input type="text" id="title" required>
 
@@ -18,20 +21,32 @@
     </form>
 
     <script>
-        // フォーム送信時の処理
         document.getElementById('calendarForm').addEventListener('submit', function(event) {
             event.preventDefault(); // ページリロードを防ぐ
 
+            const calendarIdInput = document.getElementById('calendarId').value;
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
-            const calendarId = 'calendar_' + Date.now(); // ユニークなIDを生成
 
-            // カレンダーのデータを保存する処理
-            localStorage.setItem(calendarId, JSON.stringify({ title, description })); // 仮の保存
+            // IDを指定されていない場合はランダムな6桁の英数字を生成
+            const calendarId = calendarIdInput ? calendarIdInput : generateRandomId(6);
+
+            // カレンダーのデータを保存
+            localStorage.setItem(calendarId, JSON.stringify({ title, description }));
 
             // カレンダーのページにリダイレクト
             window.location.href = `./calendar.html?id=${calendarId}`;
         });
+
+        function generateRandomId(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                result += chars[randomIndex];
+            }
+            return result;
+        }
     </script>
 </body>
 </html>
