@@ -47,3 +47,18 @@ async function loginWithExtension(privateKey) {
         );
     });
 }
+async function loginWithExtension(privateKey) {
+    console.log('Sending login request with privateKey:', privateKey); // デバッグ用ログ
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+            { type: 'login', privateKey },
+            (response) => {
+                console.log('Received response:', response); // デバッグ用ログ
+                if (chrome.runtime.lastError || response.error) {
+                    return reject(response.error || chrome.runtime.lastError.message);
+                }
+                resolve(response);
+            }
+        );
+    });
+}

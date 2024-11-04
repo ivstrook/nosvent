@@ -1,4 +1,6 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('Received request:', request); // デバッグ用ログ
+
     if (request.type === 'login') {
         const privateKey = request.privateKey;
 
@@ -8,17 +10,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
             sendResponse({ pubkey, sig });
         } catch (error) {
+            console.error('Error during login:', error); // エラーをコンソールに出力
             sendResponse({ error: error.message });
         }
     }
 });
-
-function generatePublicKey(privateKey) {
-    // 実際の鍵生成ロジックを実装
-    return '生成された公開鍵'; // 適切な公開鍵を返すように実装する
-}
-
-function signMessage(message, privateKey) {
-    // 署名生成ロジックを実装
-    return '生成された署名'; // 適切な署名を返すように実装する
-}
