@@ -94,3 +94,11 @@ body {
     border: 1px solid #888;
     width: 80%;
 }
+/* styles.css */
+button {
+    margin-left: 10px; /* ボタンの間隔を設定 */
+}
+
+div {
+    margin-bottom: 15px; /* 各divの間隔を設定 */
+}
