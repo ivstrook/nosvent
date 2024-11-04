@@ -2,19 +2,26 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/login.js" defer></script>
 </head>
 <body>
     <h1>ログイン</h1>
+    
     <div>
-        <label for="privateKey">秘密鍵 (nsec1):</label>
-        <input type="text" id="privateKey" placeholder="秘密鍵を入力" required>
-        <button id="loginButton">ログイン</button>
+        <label for="secretKey">秘密鍵 (nsec1):</label>
+        <input type="text" id="secretKey" placeholder="秘密鍵を入力" required>
+        <button id="loginWithNsec1">nsec1でログイン</button>
     </div>
+    
     <div>
-        <button id="extensionButton">拡張機能でログイン</button>
+        <button id="loginWithExtension">拡張機能でログイン</button>
     </div>
+
+    <script>
+        // ここに必要なスクリプトを追加することができます
+    </script>
 </body>
 </html>
