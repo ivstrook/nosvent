@@ -1,46 +1,4 @@
-        // 拡張機能でログインする処理
-        document.getElementById('loginWithExtension').onclick = () => {
-                const message = "ログインメッセージ"; // 署名するメッセージ
-                const event = {
-                    kind: 1, // イベントの種類
-                    content: message,
-                    tags: [], // タグは必要に応じて追加
-                    created_at: Math.floor(Date.now() / 1000) // Unix時間
-                };
-                
-                if (typeof window.nostr !== 'undefined' && typeof window.nostr.signEvent === 'function') {
-                    window.nostr.signEvent(event).then(signature => {
-                        // サーバーに署名と必要なデータを送信
-                        fetch('/api/login/extension', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ 
-                                signature: signature.sig, // 署名を送信
-                                message: message,
-                                pubkey: signature.pubkey // 公開鍵も送信
-                            }),
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                alert('ログイン成功');
-                            } else {
-                                alert('ログイン失敗');
-                            }
-                        })
-                        .catch(err => {
-                            console.error('サーバーへの送信に失敗:', err);
-                            alert('ログイン中にエラーが発生しました。');
-                        });
-                    }).catch(err => {
-                        console.error('署名の取得に失敗:', err);
-                        alert('署名の取得に失敗しました。');
-                    });
-                } else {
-                    alert('Nostr APIが利用できません。拡張機能が正しくインストールされているか確認してください。');
-                }
-            };
-    
-            // nsec1でログインする処理
+// nsec1でログインする処理
             document.getElementById('loginWithNsec1').onclick = () => {
                 const secretKey = document.getElementById('secretKey').value;
                 const message = "ログインメッセージ"; // 署名するメッセージ
@@ -67,3 +25,23 @@
                     alert('nsec1でのログイン中にエラーが発生しました。');
                 });
             };
+
+            import { connect } from 'nostr-login';
+
+async function handleLogin() {
+  try {
+    const user = await connect(); // Nostrログイン
+    console.log('Login successful:', user); // ログイン成功時のログを出力
+
+    // ユーザー情報をローカルストレージに保存
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // カレンダーページに遷移
+    window.location.href = '/calendar'; 
+  } catch (error) {
+    console.error('Login failed:', error); // エラーログ出力
+  }
+}
+
+// HTMLにボタンを追加（すでにボタンがある場合は必要ありません）
+document.getElementById('loginButton').addEventListener('click', handleLogin);
