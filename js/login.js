@@ -10,19 +10,19 @@ document.getElementById('loginWithExtension').onclick = () => {
     
     window.nostr.signEvent(event).then(signature => {
             // サーバーに署名と必要なデータを送信
-            fetch('/api/login/extension', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+    fetch('/api/login/extension', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
                     signature: signature.sig, // 署名を送信
                     message: message,
-                 pubkey: signature.pubkey // 公開鍵も送信
+                    pubkey: signature.pubkey // 公開鍵も送信
                 }),
-    )
+    })
     .then(response => {
     if (response.ok) {
+    @@ -26,4 +30,4 @@
     }).catch(err => {
     console.error('署名の取得に失敗:', err);
-    })
-    }
-}
+    });
+    }    
