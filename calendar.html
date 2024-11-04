@@ -4,11 +4,43 @@
     <meta charset="UTF-8">
     <title>カレンダー</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <style>
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .header {
+            font-weight: bold;
+            text-align: center;
+        }
+        .day {
+            border: 1px solid #ccc;
+            height: 50px;
+            text-align: center;
+            vertical-align: top;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
     <h2 id="calendarTitle"></h2>
     <p id="calendarDescription"></p>
     <div class="calendar" id="calendarDisplay"></div>
+
+    <h3>予定を追加</h3>
+    <form id="eventForm">
+        <label for="eventDate">日付:</label>
+        <input type="date" id="eventDate" required>
+        
+        <label for="eventDescription">予定の説明:</label>
+        <input type="text" id="eventDescription" required>
+        
+        <button type="submit">追加</button>
+    </form>
+
+    <h3>予定一覧</h3>
+    <ul id="eventList"></ul>
 
     <script>
         // URLからIDを取得
@@ -25,49 +57,70 @@
 
             // カレンダーを表示
             generateCalendar();
+            loadEvents(); // 予定を読み込む
         } else {
             document.getElementById('calendarTitle').textContent = 'カレンダーが見つかりません。';
         }
 
         function generateCalendar() {
             const calendarDisplay = document.getElementById('calendarDisplay');
-            // カレンダーの構造を生成（例）
-            calendarDisplay.innerHTML = `
-                <div class="header">日</div>
-                <div class="header">月</div>
-                <div class="header">火</div>
-                <div class="header">水</div>
-                <div class="header">木</div>
-                <div class="header">金</div>
-                <div class="header">土</div>
-                <!-- ここに日付を追加 -->
-                <div>1</div>
-                <div>2</div>
-                <div>3</div>
-                <div>4</div>
-                <div>5</div>
-                <div>6</div>
-                <div>7</div>
-                <div>8</div>
-                <div>9</div>
-                <div>10</div>
-                <div>11</div>
-                <div>12</div>
-                <div>13</div>
-                <div>14</div>
-                <div>15</div>
-                <div>16</div>
-                <div>17</div>
-                <div>18</div>
-                <div>19</div>
-                <div>20</div>
-                <div>21</div>
-                <div>22</div>
-                <div>23</div>
-                <div>24</div>
-                <div>25</div>
-            `;
+            const daysInMonth = 31; // 12月は31日
+            const lastDay = 25; // 25日まで表示
+            const firstDay = new Date(2023, 11, 1); // 2023年12月1日
+            const startDay = firstDay.getDay(); // 1日の曜日
+            const weeks = Math.ceil((lastDay + startDay) / 7); // 必要な週数を計算
+
+            calendarDisplay.innerHTML = ''; // 既存のカレンダーをクリア
+            // ヘッダーを追加
+            const headers = ['日', '月', '火', '水', '木', '金', '土'];
+            headers.forEach(header => {
+                const headerCell = document.createElement('div');
+                headerCell.classList.add('header');
+                headerCell.textContent = header;
+                calendarDisplay.appendChild(headerCell);
+            });
+
+            // カレンダーの日付を生成
+            for (let i = 0; i < weeks * 7; i++) {
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('day');
+
+                const currentDate = i - startDay + 1; // 現在の日付を計算
+
+                if (currentDate > 0 && currentDate <= lastDay) {
+                    dayCell.textContent = currentDate; // 日付を表示
+                }
+
+                calendarDisplay.appendChild(dayCell);
+            }
         }
+
+        function loadEvents() {
+            const events = JSON.parse(localStorage.getItem(calendarId + '_events')) || [];
+            const eventList = document.getElementById('eventList');
+            eventList.innerHTML = ''; // 既存のリストをクリア
+
+            events.forEach(event => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${event.date}: ${event.description}`;
+                eventList.appendChild(listItem);
+            });
+        }
+
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // ページリロードを防ぐ
+
+            const eventDate = document.getElementById('eventDate').value;
+            const eventDescription = document.getElementById('eventDescription').value;
+
+            // 予定を保存
+            const events = JSON.parse(localStorage.getItem(calendarId + '_events')) || [];
+            events.push({ date: eventDate, description: eventDescription });
+            localStorage.setItem(calendarId + '_events', JSON.stringify(events));
+
+            loadEvents(); // 予定を再読み込み
+            document.getElementById('eventForm').reset(); // フォームをリセット
+        });
     </script>
 </body>
 </html>
