@@ -9,14 +9,11 @@
     <h2>カレンダーを作成</h2>
     <form id="calendarForm">
         <label for="calendarId">カレンダーのID（任意、指定しない場合は自動生成）:</label>
-        <input type="text" id="calendarId" maxlength="12" pattern="[A-Za-z0-9]*" title="英数字を入力してください。最大12文字。" placeholder="任意のIDを入力">
-
+        <input type="text" id="calendarId" maxlength="12" pattern="[A-Za-z0-9]*" title="英数字を入力してください。最大12文字。" placeholder="任意のIDを入力"><br>
         <label for="title">カレンダーのタイトル:</label>
-        <input type="text" id="title" required>
-
+        <input type="text" id="title" required><br>
         <label for="description">概要:</label>
         <textarea id="description" required></textarea>
-
         <button type="submit">作成</button>
     </form>
 
