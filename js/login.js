@@ -23,4 +23,13 @@ if (response.ok) {
 console.error('署名の取得に失敗:', err);
 });
 };
-}    
+document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('loginWithExtension').onclick = () => {
+            // 拡張機能のログイン処理
+        };
+    
+        document.getElementById('loginWithNsec1').onclick = () => {
+            // nsec1のログイン処理
+        };
+    });
+    
