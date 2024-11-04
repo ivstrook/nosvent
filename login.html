@@ -12,29 +12,39 @@
 
     <div id="userInfo" style="display: none;">
         <h3>ログイン情報</h3>
+        <p><strong>ユーザー名:</strong> <span id="userName"></span></p>
         <p><strong>nsec1:</strong> <span id="nsec1"></span></p>
+        <img id="userIcon" alt="ユーザーアイコン" style="width: 50px; height: 50px;">
         <button id="confirmButton">この情報で続行</button>
     </div>
 
     <script>
         const loginButton = document.getElementById('loginButton');
         const userInfo = document.getElementById('userInfo');
+        const userNameDisplay = document.getElementById('userName');
         const nsec1Display = document.getElementById('nsec1');
+        const userIcon = document.getElementById('userIcon');
         const confirmButton = document.getElementById('confirmButton');
 
         loginButton.addEventListener('click', async () => {
-            const nostr = await NostrLogin.init({
-                // Nostrの設定をここに追加
-            });
+            try {
+                const nostr = await NostrLogin.init({
+                    // Nostrの設定をここに追加
+                });
 
-            const user = await nostr.login();
+                const user = await nostr.login();
 
-            if (user) {
-                // nsec1の内容を表示
-                nsec1Display.textContent = user.nsec1 || '情報が取得できませんでした。';
-                userInfo.style.display = 'block';
-                // ログインボタンを非表示にする
-                loginButton.style.display = 'none';
+                if (user) {
+                    // ユーザー情報を表示
+                    userNameDisplay.textContent = user.name || '情報が取得できませんでした。';
+                    nsec1Display.textContent = user.nsec1 || '情報が取得できませんでした。';
+                    userIcon.src = user.iconUrl || ''; // アイコンURLを設定
+                    userInfo.style.display = 'block';
+                    loginButton.style.display = 'none'; // ログインボタンを非表示に
+                }
+            } catch (error) {
+                console.error('ログインエラー:', error);
+                alert('ログイン中にエラーが発生しました。');
             }
         });
 
