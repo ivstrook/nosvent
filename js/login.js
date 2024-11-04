@@ -7,6 +7,7 @@ window.nostr.signEvent(event).then(signature => {
         // サーバーに署名を送信
         // サーバーに署名と必要なデータを送信
 fetch('/api/login/extension', {
+        const pubkey = await window.nostr.getPublicKey();
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ signature, message }),
