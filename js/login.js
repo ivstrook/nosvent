@@ -21,8 +21,8 @@ document.getElementById('loginWithExtension').onclick = () => {
     })
     .then(response => {
     if (response.ok) {
-    @@ -26,4 +30,4 @@
-    }).catch(err => {
+    }.catch(err => {
     console.error('署名の取得に失敗:', err);
-    });
+    };
     }    
+}
