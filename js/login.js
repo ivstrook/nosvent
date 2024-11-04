@@ -6,61 +6,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (extensionButton) {
         extensionButton.addEventListener('click', async () => {
-            const privateKey = document.getElementById('privateKey').value; // 秘密鍵を取得
+            const privateKey = document.getElementById('privateKey').value;
 
             if (!privateKey) {
                 alert('秘密鍵を入力してください。');
-                return; // 入力がない場合は処理を中断
+                return;
             }
 
             try {
-                // 拡張機能のAPIを呼び出す
-                const { pubkey, sig } = await loginWithExtension(privateKey);
-
-                console.log('Attempting to log in with:', { pubkey, sig });
-
-                const data = await sendLoginRequest(pubkey, sig);
+                const loginEvent = await createLoginEvent(privateKey);
+                const data = await sendLoginRequest(loginEvent);
                 console.log('Login response:', data);
                 alert('ログイン成功');
             } catch (error) {
                 console.error('Error during login:', error);
-                alert('ログインに失敗しました');
+                alert('ログインに失敗しました: ' + error.message);
             }
         });
     }
 
     if (loginButton) {
         loginButton.addEventListener('click', async () => {
-            const privateKey = document.getElementById('privateKey').value; // 秘密鍵を取得
-            // 通常のログイン処理を実装（必要であれば）
+            const privateKey = document.getElementById('privateKey').value;
+            // 通常のログイン処理を実装（必要に応じて）
         });
     }
 });
 
-// 拡張機能を使ってログインする関数
-async function loginWithExtension(privateKey) {
-    return new Promise((resolve, reject) => {
-        // 実際の拡張機能のAPI呼び出しを実装
-        chrome.runtime.sendMessage(
-            { type: 'login', privateKey },
-            (response) => {
-                if (chrome.runtime.lastError || response.error) {
-                    return reject(response.error || chrome.runtime.lastError);
-                }
-                resolve(response);
-            }
-        );
-    });
+// NIP-07に基づくログインイベントを作成する関数
+async function createLoginEvent(privateKey) {
+    const pubkey = generatePublicKey(privateKey); // 公開鍵を生成
+    const event = {
+        kind: 1, // Kind 1は「テキストノート」などのイベントタイプを表す
+        content: 'ログインリクエスト',
+        tags: [['p', pubkey]], // タグとして公開鍵を追加
+        created_at: Math.floor(Date.now() / 1000), // UNIXタイムスタンプ
+        pubkey: pubkey, // 公開鍵を含める
+        id: '', // ここは後で生成される
+        sig: '' // 署名も後で追加
+    };
+
+    // イベントのIDと署名を生成する
+    event.id = generateEventId(event);
+    event.sig = signEvent(event, privateKey); // イベントを署名する関数
+
+    return event;
 }
 
 // リクエストを送信する関数
-async function sendLoginRequest(pubkey, sig) {
+async function sendLoginRequest(event) {
     const response = await fetch('/api/login/extension', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ pubkey, sig })
+        body: JSON.stringify(event)
     });
 
     if (!response.ok) {
@@ -68,4 +68,22 @@ async function sendLoginRequest(pubkey, sig) {
     }
 
     return await response.json();
+}
+
+// 公開鍵を生成する関数（実装が必要）
+function generatePublicKey(privateKey) {
+    // 実際の鍵生成ロジックを実装
+    return '生成された公開鍵';
+}
+
+// イベントのIDを生成する関数（実装が必要）
+function generateEventId(event) {
+    // ID生成ロジックを実装
+    return '生成されたイベントID';
+}
+
+// イベントに署名する関数（実装が必要）
+function signEvent(event, privateKey) {
+    // 署名ロジックを実装
+    return '生成された署名';
 }
