@@ -4,26 +4,22 @@
     <meta charset="UTF-8">
     <title>Nostrログイン</title>
     <link rel="stylesheet" href="./css/styles.css">
-    <script src='https://www.unpkg.com/@blockcore/nostr-login@1.0.7/dist/unpkg.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js'></script>
 </head>
 <body>
     <h2>Nostrでログイン</h2>
     <button id="loginButton">ログイン</button>
 
-    <div id="userInfo" style="display: none;">
-        <h3>ログイン情報</h3>
-        <p><strong>ユーザー名:</strong> <span id="userName"></span></p>
-        <p><strong>nsec1:</strong> <span id="nsec1"></span></p>
-        <img id="userIcon" alt="ユーザーアイコン" style="width: 50px; height: 50px;">
+    <div id="qrCodeContainer" style="display: none;">
+        <h3>QRコードをスキャンしてログイン</h3>
+        <div id="qrcode"></div>
         <button id="confirmButton">この情報で続行</button>
     </div>
 
     <script>
         const loginButton = document.getElementById('loginButton');
-        const userInfo = document.getElementById('userInfo');
-        const userNameDisplay = document.getElementById('userName');
-        const nsec1Display = document.getElementById('nsec1');
-        const userIcon = document.getElementById('userIcon');
+        const qrCodeContainer = document.getElementById('qrCodeContainer');
         const confirmButton = document.getElementById('confirmButton');
 
         loginButton.addEventListener('click', async () => {
@@ -32,16 +28,17 @@
                     // Nostrの設定をここに追加
                 });
 
-                const user = await nostr.login();
+                const loginUrl = await nostr.getLoginUrl(); // QRコード用のログインURLを取得
 
-                if (user) {
-                    // ユーザー情報を表示
-                    userNameDisplay.textContent = user.name || '情報が取得できませんでした。';
-                    nsec1Display.textContent = user.nsec1 || '情報が取得できませんでした。';
-                    userIcon.src = user.iconUrl || ''; // アイコンURLを設定
-                    userInfo.style.display = 'block';
-                    loginButton.style.display = 'none'; // ログインボタンを非表示に
-                }
+                // QRコードを生成
+                $('#qrcode').empty(); // 以前のQRコードをクリア
+                $('#qrcode').qrcode({
+                    text: loginUrl,
+                    width: 200,
+                    height: 200
+                });
+
+                qrCodeContainer.style.display = 'block'; // QRコードコンテナを表示
             } catch (error) {
                 console.error('ログインエラー:', error);
                 alert('ログイン中にエラーが発生しました。');
