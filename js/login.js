@@ -2,8 +2,8 @@
 document.getElementById('loginWithExtension').onclick = () => {
     const message = "ログインメッセージ"; // 署名するメッセージ
     const event = {
-    kind: 1, // イベントの種類
-    content: message,
+    kind: 0,30315,31922, // イベントの種類
+    content: getprofile,
     tags: [], // タグは必要に応じて追加
     created_at: Math.floor(Date.now() / 1000) // Unix時間
     };
