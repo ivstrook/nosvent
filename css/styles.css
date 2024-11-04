@@ -36,6 +36,28 @@ body {
         font-size: 1.2em; /* フォントサイズを大きく */
     }
 }
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7列 */
+    grid-template-rows: repeat(5, 1fr); /* 5行 */
+    gap: 1px; /* セルの間隔 */
+    background-color: #f0f0f0; /* 背景色 */
+}
+
+.calendar div {
+    border: 1px solid #ccc; /* 枠線 */
+    display: flex;
+    align-items: center; /* 中央揃え */
+    justify-content: center; /* 中央揃え */
+    height: 80px; /* 高さ */
+    font-size: 1.2em; /* フォントサイズ */
+}
+
+.header {
+    background-color: #4CAF50; /* ヘッダーの背景色 */
+    color: white; /* ヘッダーの文字色 */
+}
+
 .calendar-day {
     text-align: center;
     padding: 10px;

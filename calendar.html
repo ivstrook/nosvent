@@ -2,217 +2,72 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アドベントカレンダー</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/css/pikaday.css" />
+    <title>カレンダー</title>
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-    <h1>アドベントカレンダー</h1>
-    <input type="text" id="datepicker" placeholder="日付を選択" />
-    <input type="text" id="eventInput" placeholder="予定を追加" />
-    <input type="text" id="urlInput" placeholder="URLを追加（任意）" />
-    <button id="addEventButton">追加</button>
+    <h2 id="calendarTitle"></h2>
+    <p id="calendarDescription"></p>
+    <div class="calendar" id="calendarDisplay"></div>
 
-    <div id="calendar" class="calendar"></div>
-    <div id="eventModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>予定を追加/編集</h2>
-            <input type="text" id="modalEventInput" placeholder="予定を入力" />
-            <input type="text" id="modalUserInput" placeholder="登録者名を入力" />
-            <input type="text" id="modalUrlInput" placeholder="URLを入力（任意）" />
-            <button id="saveEventButton">保存</button>
-        </div>
-    </div>
-    <div id="events">
-        <h2>予定一覧</h2>
-        <ul id="eventList"></ul>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/pikaday.js"></script>
     <script>
-        const picker = new Pikaday({
-            field: document.getElementById('datepicker'),
-            format: 'YYYY-MM-DD',
-            onSelect: function(date) {
-                renderEventsForDate(date);
-            },
-            minDate: new Date(2024, 11, 1), // 12月1日
-            maxDate: new Date(2024, 11, 25), // 12月25日
-        });
+        // URLからIDを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const calendarId = urlParams.get('id');
 
-        let eventListData = []; // 予定のデータを管理する配列
+        // localStorageからデータを取得
+        const calendarData = JSON.parse(localStorage.getItem(calendarId));
 
-        function renderCalendar() {
-            const calendar = document.getElementById('calendar');
-            calendar.innerHTML = ''; // 一旦リセット
+        // カレンダーのタイトルと概要を表示
+        if (calendarData) {
+            document.getElementById('calendarTitle').textContent = calendarData.title;
+            document.getElementById('calendarDescription').textContent = calendarData.description;
 
-            const year = 2024;
-            const month = 11; // 12月
-            const daysInMonth = 25; // 25日まで表示
-            const startDate = new Date(year, month, 1);
-            const startDay = startDate.getDay(); // 1日の曜日
-
-            // 曜日ラベルを追加
-            const dayLabels = ['日', '月', '火', '水', '木', '金', '土'];
-            dayLabels.forEach(label => {
-                const labelDiv = document.createElement('div');
-                labelDiv.className = 'calendar-day day-label';
-                labelDiv.textContent = label;
-                calendar.appendChild(labelDiv);
-            });
-
-            // 空白の日付を追加
-            for (let i = 0; i < startDay; i++) {
-                const emptyDiv = document.createElement('div');
-                emptyDiv.className = 'calendar-day';
-                calendar.appendChild(emptyDiv);
-            }
-
-            // 各日付を追加
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(year, month, day);
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'calendar-day';
-                dayDiv.textContent = day;
-
-                const formattedDate = date.toISOString().split('T')[0];
-                const eventsForDate = eventListData.filter(event => event.date === formattedDate);
-                if (eventsForDate.length > 0) {
-                    dayDiv.classList.add('has-event');
-                    const badge = document.createElement('span');
-                    badge.className = 'event-badge';
-                    badge.textContent = eventsForDate.length; // 予定の数を表示
-                    dayDiv.appendChild(badge);
-                }
-
-                dayDiv.onclick = () => {
-                    picker.setDate(date);
-                    renderEventsForDate(date);
-                };
-
-                calendar.appendChild(dayDiv);
-            }
+            // カレンダーを表示
+            generateCalendar();
+        } else {
+            document.getElementById('calendarTitle').textContent = 'カレンダーが見つかりません。';
         }
 
-        function renderEventsForDate(date) {
-            const formattedDate = date.toISOString().split('T')[0];
-            const eventsForDate = eventListData.filter(event => event.date === formattedDate);
-            const eventList = document.getElementById('eventList');
-            eventList.innerHTML = ''; // 一旦リセット
-
-            if (eventsForDate.length === 0) {
-                eventList.innerHTML = '<li>この日に予定はありません。</li>';
-            } else {
-                eventsForDate.forEach((event, index) => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `${event.text} (登録者: ${event.user})`;
-
-                    if (event.url) {
-                        const link = document.createElement('a');
-                        link.href = event.url.startsWith('http') ? event.url : 'http://' + event.url;
-                        link.textContent = ' (リンク)';
-                        link.target = '_blank'; // 新しいタブで開く
-                        listItem.appendChild(link);
-                    }
-
-                    // 編集ボタンを追加
-                    const editButton = document.createElement('button');
-                    editButton.textContent = '編集';
-                    editButton.onclick = () => editEvent(index);
-                    listItem.appendChild(editButton);
-                    
-                    eventList.appendChild(listItem);
-                });
-            }
+        function generateCalendar() {
+            const calendarDisplay = document.getElementById('calendarDisplay');
+            // カレンダーの構造を生成（例）
+            calendarDisplay.innerHTML = `
+                <div class="header">日</div>
+                <div class="header">月</div>
+                <div class="header">火</div>
+                <div class="header">水</div>
+                <div class="header">木</div>
+                <div class="header">金</div>
+                <div class="header">土</div>
+                <!-- ここに日付を追加 -->
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+                <div>6</div>
+                <div>7</div>
+                <div>8</div>
+                <div>9</div>
+                <div>10</div>
+                <div>11</div>
+                <div>12</div>
+                <div>13</div>
+                <div>14</div>
+                <div>15</div>
+                <div>16</div>
+                <div>17</div>
+                <div>18</div>
+                <div>19</div>
+                <div>20</div>
+                <div>21</div>
+                <div>22</div>
+                <div>23</div>
+                <div>24</div>
+                <div>25</div>
+            `;
         }
-
-        function editEvent(index) {
-            const event = eventListData[index];
-            document.getElementById('datepicker').value = event.date;
-            document.getElementById('eventInput').value = event.text;
-            document.getElementById('urlInput').value = event.url;
-
-            // 追加ボタンを編集モードに変更
-            document.getElementById('addEventButton').onclick = () => {
-                updateEvent(index);
-            };
-        }
-
-        function updateEvent(index) {
-            const date = picker.getDate();
-            if (!date) {
-                alert('日付を選択してください');
-                return;
-            }
-
-            const formattedDate = date.toISOString().split('T')[0];
-            const eventText = document.getElementById('eventInput').value;
-            const url = document.getElementById('urlInput').value;
-
-            if (eventText) {
-                eventListData[index] = { date: formattedDate, text: eventText, url: url }; // 更新
-                renderEventsForDate(date); // 更新後の予定を表示
-                renderCalendar(); // カレンダーの再描画
-                clearInputs();
-            } else {
-                alert('予定を入力してください');
-            }
-        }
-
-        document.getElementById('addEventButton').onclick = () => {
-            const date = picker.getDate();
-            if (!date) {
-                alert('日付を選択してください');
-                return;
-            }
-
-            const formattedDate = date.toISOString().split('T')[0];
-            const eventText = document.getElementById('eventInput').value;
-            const url = document.getElementById('urlInput').value;
-
-            if (eventText) {
-                const userName = document.getElementById('modalUserInput').value || '未登録'; // 登録者名のデフォルト値
-                eventListData.push({ date: formattedDate, text: eventText, user: userName, url: url });
-                renderEventsForDate(date); // 日付に対する予定を表示
-                renderCalendar(); // カレンダーの再描画
-                clearInputs();
-            } else {
-                alert('予定を入力してください');
-            }
-        };
-
-        function clearInputs() {
-            document.getElementById('eventInput').value = '';
-            document.getElementById('urlInput').value = '';
-            document.getElementById('datepicker').value = '';
-            document.getElementById('addEventButton').onclick = () => { // 追加ボタンを元に戻す
-                document.getElementById('addEventButton').onclick = () => {
-                    const date = picker.getDate();
-                    if (!date) {
-                        alert('日付を選択してください');
-                        return;
-                    }
-
-                    const formattedDate = date.toISOString().split('T')[0];
-                    const eventText = document.getElementById('eventInput').value;
-                    const url = document.getElementById('urlInput').value;
-
-                    if (eventText) {
-                        eventListData.push({ date: formattedDate, text: eventText, user: '未登録', url: url });
-                        renderEventsForDate(date); // 日付に対する予定を表示
-                        renderCalendar(); // カレンダーの再描画
-                        clearInputs();
-                    } else {
-                        alert('予定を入力してください');
-                    }
-                };
-            };
-        }
-
-        renderCalendar(); // 初期カレンダーを描画
     </script>
-    <script src="./js/script.js"></script>
 </body>
 </html>
