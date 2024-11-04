@@ -1,4 +1,4 @@
-// nsec1でログインする処理
+            // nsec1でログインする処理
             document.getElementById('loginWithNsec1').onclick = () => {
                 const secretKey = document.getElementById('secretKey').value;
                 const message = "ログインメッセージ"; // 署名するメッセージ
