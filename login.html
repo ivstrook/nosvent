@@ -1,16 +1,50 @@
 <!DOCTYPE html>
+<html lang="ja">
 <head>
-    <title>ログイン - nosvent</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Nostrログイン</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <script src='https://www.unpkg.com/@blockcore/nostr-login@1.0.7/dist/unpkg.js'></script>
 </head>
 <body>
-    <center>
-            <div class="container">
-            <h1>ログイン</h1>
-            <p>作業を続けるには、ログインしてください。</p>
-            <p>秘密鍵</p>
-            <input type="text" id="nsec1" class="textbox" placeholder="nsec1....">
-            <br><input type="button" value="ログイン" class="button margin" onclick="login()"><br>
-            <button id="extensionLoginButton">拡張機能</button>
-        </div>
-        </center>
+    <h2>Nostrでログイン</h2>
+    <button id="loginButton">ログイン</button>
+
+    <div id="userInfo" style="display: none;">
+        <h3>ログイン情報</h3>
+        <p><strong>nsec1:</strong> <span id="nsec1"></span></p>
+        <button id="confirmButton">この情報で続行</button>
+    </div>
+
+    <script>
+        const loginButton = document.getElementById('loginButton');
+        const userInfo = document.getElementById('userInfo');
+        const nsec1Display = document.getElementById('nsec1');
+        const confirmButton = document.getElementById('confirmButton');
+
+        loginButton.addEventListener('click', async () => {
+            const nostr = await NostrLogin.init({
+                // Nostrの設定をここに追加
+            });
+
+            const user = await nostr.login();
+
+            if (user) {
+                // nsec1の内容を表示
+                nsec1Display.textContent = user.nsec1 || '情報が取得できませんでした。';
+                userInfo.style.display = 'block';
+                // ログインボタンを非表示にする
+                loginButton.style.display = 'none';
+            }
+        });
+
+        confirmButton.addEventListener('click', function() {
+            // カレンダーID検索画面に転送
+            window.location.href = './search_calendar.html';
+        });
+    </script>
+</body>
+<footer>
+    <p><a href="https://ffnet.work">Copyright IVStrook</a></p>
+</footer>
+</html>
