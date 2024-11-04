@@ -4,24 +4,52 @@
     <meta charset="UTF-8">
     <title>nosvent</title>
     <link rel="stylesheet" href="./css/styles.css">
-    <script src="./js/script.js"></script>
-    <script src='https://www.unpkg.com/@blockcore/nostr-login@1.0.7/dist/unpkg.js'></script>
+    <script src='./js/script.js'></script>
 </head>
 <body>
     <h2>Nosvent</h2>
     <p>Welcome to nosvent</p>
 
-    <button id="createCalendarButton">新しいカレンダーを作成</button>
-    
-    <button id="joinCalendarButton">カレンダーに参加する</button>
+    <button id="loginButton"><a href="login.html">ログイン</a></button>
+
+    <div id="userInfo" style="display: none;">
+        <h3>ログインユーザー</h3>
+        <img id="userIcon" alt="User Icon" style="width: 50px; height: 50px;">
+        <p id="userName"></p>
+    </div>
+
+    <button id="createCalendarButton"><a href="create_cal.html">新しいカレンダーを作成</a></button>
 
     <script>
+        const loginButton = document.getElementById('loginButton');
+        const userInfo = document.getElementById('userInfo');
+        const userName = document.getElementById('userName');
+        const userIcon = document.getElementById('userIcon');
+
+        loginButton.addEventListener('click', async () => {
+            const nostr = await NostrLogin.init({ 
+                // Nostrの設定をここに追加 
+            });
+
+            const user = await nostr.login();
+
+            if (user) {
+                // ユーザー情報を表示
+                userName.textContent = user.name;
+                userIcon.src = user.iconUrl; // アイコンURLを設定
+                userInfo.style.display = 'block';
+
+                // カレンダーID検索画面に転送
+                window.location.href = './search_calendar.html';
+            }
+        });
+
         document.getElementById('createCalendarButton').addEventListener('click', function() {
-            window.location.href = './create_cal.html'; // カレンダー作成ページに遷移
+            window.location.href = './create_calendar.html';
         });
 
         document.getElementById('joinCalendarButton').addEventListener('click', function() {
-            window.location.href = 'https://github.com/nostrband/nostr-login'; // ログインページに遷移
+            window.location.href = 'https://github.com/nostrband/nostr-login';
         });
     </script>
 </body>

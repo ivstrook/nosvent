@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>カレンダー検索</title>
+</head>
+<body>
+    <h2>カレンダーIDを検索</h2>
+    <input type="text" id="calendarId" placeholder="カレンダーIDを入力">
+    <button id="searchButton">検索</button>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const calendarId = document.getElementById('calendarId').value;
+            window.location.href = `./calendar.html?id=${calendarId}`;
+        });
+    </script>
+</body>
+</html>
