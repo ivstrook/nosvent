@@ -9,46 +9,7 @@
 <body>
     <h2>Nostrでログイン</h2>
     <button id="loginButton">ログイン</button>
-
-    <div id="qrCodeContainer" style="display: none;">
-        <h3>QRコードをスキャンしてログイン</h3>
-        <div id="qrcode"></div>
-        <button id="confirmButton">この情報で続行</button>
     </div>
-
-    <script>
-        const loginButton = document.getElementById('loginButton');
-        const qrCodeContainer = document.getElementById('qrCodeContainer');
-        const confirmButton = document.getElementById('confirmButton');
-
-        loginButton.addEventListener('click', async () => {
-            try {
-                const nostr = await NostrLogin.init({
-                    // Nostrの設定をここに追加
-                });
-
-                const loginUrl = await nostr.getLoginUrl(); // QRコード用のログインURLを取得
-
-                // QRコードを生成
-                $('#qrcode').empty(); // 以前のQRコードをクリア
-                $('#qrcode').qrcode({
-                    text: loginUrl,
-                    width: 200,
-                    height: 200
-                });
-
-                qrCodeContainer.style.display = 'block'; // QRコードコンテナを表示
-            } catch (error) {
-                console.error('ログインエラー:', error);
-                alert('ログイン中にエラーが発生しました。');
-            }
-        });
-
-        confirmButton.addEventListener('click', function() {
-            // カレンダーID検索画面に転送
-            window.location.href = './search_calendar.html';
-        });
-    </script>
 </body>
 <footer>
     <p><a href="https://ffnet.work">Copyright IVStrook</a></p>
