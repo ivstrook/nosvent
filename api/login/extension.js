@@ -11,8 +11,9 @@ app.post('/api/login/extension', (req, res) => {
 
     // ここにログイン処理を実装（例: 公開鍵と署名の検証）
     if (pubkey && sig) {
-        // 成功レスポンス
-        res.status(200).json({ message: 'Login successful', pubkey });
+    // 成功レスポンス
+    res.setHeader('Set-Cookie', `token=your_jwt_token; Path=/; SameSite=None; Secure; HttpOnly`);
+    res.status(200).json({ message: 'Login successful', pubkey });
     } else {
         // エラーレスポンス
         res.status(400).json({ error: 'Invalid credentials' });
