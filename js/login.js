@@ -1,14 +1,28 @@
-const message = "ログインメッセージ"; // 署名するメッセージ
-
-async window.nostr.getPublicKey(): string // returns a public key as hex
-async window.nostr.signEvent(event: { created_at: number, kind: number, tags: string[][], content: string }): Event // takes an event object, adds `id`, `pubkey` and `sig` and returns it
-// returns a basic map of relay urls to relay policies
-async window.nostr.getRelays(): { [url: string]: {read: boolean, write: boolean} }
-// returns ciphertext and iv as specified in nip-04
-async window.nostr.nip04.encrypt(pubkey, plaintext): string
-// takes ciphertext and iv as specified in nip-04
-async window.nostr.nip04.decrypt(pubkey, ciphertext): string
-// returns ciphertext as specified in nip-44
-async window.nostr.nip44.encrypt(pubkey, plaintext): string
-// takes ciphertext as specified in nip-44
-async window.nostr.nip44.decrypt(pubkey, ciphertext): string
+// 拡張機能でログインする処理
+document.getElementById('loginWithExtension').onclick = () => {
+        const message = "ログインメッセージ"; // 署名するメッセージ
+        const event = {
+        kind: 1, // イベントの種類
+        content: message,
+        tags: [], // タグは必要に応じて追加
+        created_at: Math.floor(Date.now() / 1000) // Unix時間
+        };
+        
+        window.nostr.signEvent(event).then(signature => {
+                // サーバーに署名と必要なデータを送信
+        fetch('/api/login/extension', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+                        signature: signature.sig, // 署名を送信
+                        message: message,
+                        pubkey: signature.pubkey // 公開鍵も送信
+                    }),
+        })
+        .then(response => {
+        if (response.ok) {
+        @@ -26,4 +30,4 @@
+        }).catch(err => {
+        console.error('署名の取得に失敗:', err);
+        });
+        }    
