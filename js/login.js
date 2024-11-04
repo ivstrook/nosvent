@@ -1,33 +1,26 @@
-const message = "ログインメッセージ"; // 署名するメッセージ
-
-if (typeof window.nostr !== 'undefined' && typeof window.nostr.signMessage === 'function') {
-        // 拡張機能のAPIを呼び出して署名を取得
-window.nostr.signMessage(message).then(signature => {
-// サーバーに署名を送信
-fetch('/api/login/extension', {
-@@ -17,21 +18,24 @@ document.getElementById('loginWithExtension').onclick = () => {
-} else {
-alert('ログイン失敗');
-}
-            }).catch(err => {
-                console.error('サーバーへの送信に失敗:', err);
-                alert('ログイン中にエラーが発生しました。');
-});
-}).catch(err => {
-console.error('署名の取得に失敗:', err);
-            alert('署名の取得に失敗しました。');
-});
-} else {
-alert('Nostr APIが利用できません。拡張機能が正しくインストールされているか確認してください。');
-}
+tags: [], // タグは必要に応じて追加
+created_at: Math.floor(Date.now() / 1000) // Unix時間
 };
-
-
-// nsec1でログインする処理
-document.getElementById('loginWithNsec1').onclick = () => {
-const secretKey = document.getElementById('secretKey').value;
-const message = "ログインメッセージ"; // 署名するメッセージ
     
 
-// 秘密キーを使って署名を生成する関数を呼び出す
-const signature = signMessageWithNsec1(secretKey, message); // 署名生成関数
+window.nostr.signEvent(event).then(signature => {
+        // サーバーに署名を送信
+        // サーバーに署名と必要なデータを送信
+fetch('/api/login/extension', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ signature, message }),
+            body: JSON.stringify({ 
+                signature: signature.sig, // 署名を送信
+                message: message,
+                pubkey: signature.pubkey // 公開鍵も送信
+            }),
+})
+.then(response => {
+if (response.ok) {
+@@ -26,4 +30,4 @@ document.getElementById('loginWithExtension').onclick = () => {
+}).catch(err => {
+console.error('署名の取得に失敗:', err);
+});
+};
+}    
