@@ -25,23 +25,8 @@
                     alert('nsec1でのログイン中にエラーが発生しました。');
                 });
             };
-
-            import { connect } from 'nostr-login';
-
-async function handleLogin() {
-  try {
-    const user = await connect(); // Nostrログイン
-    console.log('Login successful:', user); // ログイン成功時のログを出力
-
-    // ユーザー情報をローカルストレージに保存
-    localStorage.setItem('user', JSON.stringify(user));
-
-    // カレンダーページに遷移
-    window.location.href = '/calendar'; 
-  } catch (error) {
-    console.error('Login failed:', error); // エラーログ出力
-  }
-}
-
-// HTMLにボタンを追加（すでにボタンがある場合は必要ありません）
-document.getElementById('loginButton').addEventListener('click', handleLogin);
+            window.location.href = './calendar.html'; 
+        } catch (error) {
+          console.error('Login failed:', error); // エラーログ出力
+        }
+      }
