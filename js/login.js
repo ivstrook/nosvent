@@ -1,64 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const extensionButton = document.getElementById('extensionButton');
-    const loginButton = document.getElementById('loginButton');
+const message = "ログインメッセージ"; // 署名するメッセージ
 
-    if (extensionButton) {
-        extensionButton.addEventListener('click', async () => {
-            console.log('拡張機能ログインボタンが押されました');
-            const privateKey = document.getElementById('privateKey').value;
-
-            if (!privateKey) {
-                alert('秘密鍵を入力してください。');
-                return;
-            }
-
-            try {
-                const response = await loginWithExtension(privateKey);
-                console.log('Login response:', response);
-                alert('ログイン成功');
-                // ここに成功後の処理を追加
-            } catch (error) {
-                console.error('Error during login:', error);
-                alert('ログインに失敗しました: ' + error.message);
-            }
-        });
-    }
-
-    // 通常のログイン処理
-    if (loginButton) {
-        loginButton.addEventListener('click', () => {
-            const privateKey = document.getElementById('privateKey').value;
-            // 通常のログイン処理をここに追加
-            alert('通常のログイン機能はまだ実装されていません。');
-        });
-    }
+if (typeof window.nostr !== 'undefined' && typeof window.nostr.signMessage === 'function') {
+        // 拡張機能のAPIを呼び出して署名を取得
+window.nostr.signMessage(message).then(signature => {
+// サーバーに署名を送信
+fetch('/api/login/extension', {
+@@ -17,21 +18,24 @@ document.getElementById('loginWithExtension').onclick = () => {
+} else {
+alert('ログイン失敗');
+}
+            }).catch(err => {
+                console.error('サーバーへの送信に失敗:', err);
+                alert('ログイン中にエラーが発生しました。');
 });
+}).catch(err => {
+console.error('署名の取得に失敗:', err);
+            alert('署名の取得に失敗しました。');
+});
+} else {
+alert('Nostr APIが利用できません。拡張機能が正しくインストールされているか確認してください。');
+}
+};
 
-async function loginWithExtension(privateKey) {
-    return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage(
-            { type: 'login', privateKey },
-            (response) => {
-                if (chrome.runtime.lastError || response.error) {
-                    return reject(response.error || chrome.runtime.lastError.message);
-                }
-                resolve(response);
-            }
-        );
-    });
-}
-async function loginWithExtension(privateKey) {
-    console.log('Sending login request with privateKey:', privateKey); // デバッグ用ログ
-    return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage(
-            { type: 'login', privateKey },
-            (response) => {
-                console.log('Received response:', response); // デバッグ用ログ
-                if (chrome.runtime.lastError || response.error) {
-                    return reject(response.error || chrome.runtime.lastError.message);
-                }
-                resolve(response);
-            }
-        );
-    });
-}
+
+// nsec1でログインする処理
+document.getElementById('loginWithNsec1').onclick = () => {
+const secretKey = document.getElementById('secretKey').value;
+const message = "ログインメッセージ"; // 署名するメッセージ
+    
+
+// 秘密キーを使って署名を生成する関数を呼び出す
+const signature = signMessageWithNsec1(secretKey, message); // 署名生成関数
