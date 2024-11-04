@@ -109,3 +109,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = document.querySelector('.close');
     closeModalButton.onclick = closeEventModal; // モーダルの閉じるボタンの処理
 });
+
+document.getElementById('createCalendar').addEventListener('click', function() {
+    // 新しいカレンダーを作成するロジック
+    const newCalendarId = 'calendar_' + Date.now(); // ユニークなIDを生成
+    const iframe = document.getElementById('calendarFrame');
+    iframe.src = `./calendar.html?id=${newCalendarId}`; // 新しいカレンダーを読み込む
+
+    alert('新しいカレンダーが作成されました: ' + newCalendarId);
+});
+
+document.getElementById('generateURL').addEventListener('click', function() {
+    const iframe = document.getElementById('calendarFrame');
+    const currentURL = iframe.src;
+    document.getElementById('calendarURL').value = currentURL; // URLを入力フィールドに表示
+});

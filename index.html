@@ -7,7 +7,19 @@
 <body>
   <h2>Nosvent</h2>
   <p>Welcome to nosvent</p>
-    <iframe src="./calendar.html" width="1000" height="400" allowfullscreen></iframe>
+
+  <!-- カレンダー作成ボタン -->
+  <button id="createCalendar">新しくカレンダーを作る</button>
+
+  <!-- カレンダーを表示する iframe -->
+  <iframe id="calendarFrame" src="./calendar.html" width="1000" height="400" allowfullscreen></iframe>
+
+  <!-- URL生成 -->
+  <div>
+    <p>カレンダーのURL:</p>
+    <input type="text" id="calendarURL" readonly />
+    <button id="generateURL">URLを生成</button>
+  </div>
 </body>
 <footer>
   <p><a href="https://ffnet.work">Copyright IVStrook</a></p>

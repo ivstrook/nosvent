@@ -9,15 +9,32 @@ body {
 #eventInput, #urlInput {
     margin-right: 10px;
 }
+/* 基本スタイル */
 .calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    width: 100%; /* 幅を100%に設定 */
-    max-width: 800px; /* 最大幅を設定 */
-    margin: auto; /* 中央揃え */
+    width: 100%;
+    max-width: 800px; /* 最大幅 */
+    margin: 0 auto; /* 中央揃え */
+}
+
+/* 小さい画面用 */
+@media (max-width: 600px) {
+    .calendar {
+        font-size: 0.8em; /* フォントサイズを小さく */
+    }
+}
+
+/* 中くらいの画面用 */
+@media (min-width: 601px) and (max-width: 900px) {
+    .calendar {
+        font-size: 1em; /* 通常のフォントサイズ */
+    }
+}
+
+/* 大きい画面用 */
+@media (min-width: 901px) {
+    .calendar {
+        font-size: 1.2em; /* フォントサイズを大きく */
+    }
 }
 .calendar-day {
     text-align: center;
